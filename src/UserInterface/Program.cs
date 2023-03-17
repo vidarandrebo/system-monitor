@@ -1,6 +1,7 @@
 ﻿using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
+using Monitors;
 using Serilog;
 
 namespace UserInterface;
@@ -34,12 +35,13 @@ public class Program
             {
                 services.AddSingleton<IApplicationWindow, ApplicationWindow>();
                 services.AddSingleton<IMonitoringService, MonitoringService>();
+                services.AddSingleton<ITemperatureMonitor, TemperatureMonitor>();
                 services.AddSingleton<MonitoringWindow>();
             })
             .UseSerilog()
             .Build();
 
-        var service = ActivatorUtilities.CreateInstance<MonitoringService>(host.Services);
-        service.Run();
+        var monitoringService = ActivatorUtilities.CreateInstance<MonitoringService>(host.Services);
+        monitoringService.Run();
     }
 }

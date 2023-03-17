@@ -1,6 +1,5 @@
 using Domain;
-using Monitors;
-using Serilog;
+using Microsoft.Extensions.Logging;
 using Terminal.Gui;
 
 namespace UserInterface;
@@ -8,33 +7,27 @@ namespace UserInterface;
 public class MonitoringWindow : Window
 {
     private List<Task> _tasks;
-    private TemperatureMonitor _temperatureMonitor;
-    private ILogger _logger;
+    private ILogger<MonitoringWindow> _logger;
+    private Label _label;
+    private DeviceTemperature _dev;
 
-    public MonitoringWindow()
+    public MonitoringWindow(ILogger<MonitoringWindow> logger)
     {
-        _logger = Log.ForContext<Program>();
-        _temperatureMonitor = new TemperatureMonitor(_logger);
+        _dev = new DeviceTemperature("/sys/class/hwmon/hwmon2/temp1_input");
+        _logger = logger;
         _tasks = new List<Task>();
         Title = "System Monitor (Ctrl+Q to quit)";
-        var valueSomething = new Label()
+        _label = new Label()
         {
             Text = "1"
         };
-        Add(valueSomething);
-        _tasks.Add(Task.Run(() => UpdateValue(valueSomething)));
-        _logger.Information("Created monitoring window");
+        Add(_label);
+        _logger.LogInformation("Created monitoring window");
     }
 
-    public async Task UpdateValue(Label label)
+    public void UpdateValue(int number)
     {
-        var dev = new DeviceTemperature("/sys/class/hwmon/hwmon2/temp1_input");
-        while (true)
-        {
-            _temperatureMonitor.UpdateDevice(dev);
-            label.Text = $"Tctl - Current: {dev.Value}, Min: {dev.Min}, Max: {dev.Max}";
-            await Task.Delay(1000);
-            Application.MainLoop.Invoke(() => Application.Refresh());
-        }
+        _label.Text = $"Tctl - Current: {_dev.Value = number}, Min: {_dev.Min}, Max: {_dev.Max}";
+        Application.MainLoop.Invoke(() => Application.Refresh());
     }
 }

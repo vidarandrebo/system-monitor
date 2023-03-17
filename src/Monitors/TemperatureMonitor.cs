@@ -1,16 +1,22 @@
 ﻿using Domain;
-using Serilog;
+using Microsoft.Extensions.Logging;
 
 namespace Monitors;
 
-public class TemperatureMonitor
+public interface ITemperatureMonitor
 {
-    private readonly ILogger _logger;
-    public TemperatureMonitor(ILogger logger)
+    Int64 GetValueFromFile(string fileName);
+    void UpdateDevice(DeviceTemperature device);
+
+}
+public class TemperatureMonitor : ITemperatureMonitor
+{
+    private readonly ILogger<TemperatureMonitor> _logger;
+    public TemperatureMonitor(ILogger<TemperatureMonitor> logger)
     {
         MonitoringModules = new List<MonitoringModule>();
         _logger = logger;
-        _logger.Information("Created temperaturemonitor");
+        _logger.LogInformation("Created temperaturemonitor");
     }
 
     public List<MonitoringModule> MonitoringModules { get; set; }
