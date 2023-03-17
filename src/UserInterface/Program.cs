@@ -1,36 +1,44 @@
-﻿using Domain;
-using Monitors;
-using Terminal.Gui;
+﻿using Microsoft.Extensions.Configuration;
+using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Hosting;
+using Serilog;
 
-Application.Run<MonitoringWindow>();
+namespace UserInterface;
 
-Application.Shutdown();
-
-public class MonitoringWindow : Window
+public class Program
 {
-    private List<Task> _tasks;
-    private TemperatureMonitor _temperatureMonitor;
-    public MonitoringWindow()
+    static void BuildConfig(IConfigurationBuilder builder)
     {
-        _temperatureMonitor = new TemperatureMonitor();
-        _tasks = new List<Task>();
-        Title = "System Monitor (Ctrl+Q to quit)";
-        var valueSomething = new Label()
-        {
-            Text = "1"
-        };
-        Add(valueSomething);
-        _tasks.Add(Task.Run(() => UpdateValue(valueSomething)));
+        builder.SetBasePath(Directory.GetCurrentDirectory())
+            .AddJsonFile("appsettings.json", optional: false, reloadOnChange: true)
+            .AddJsonFile(
+                $"appsettings.{Environment.GetEnvironmentVariable("ASPNETCORE_ENVIROMENT") ?? "Production"}.json",
+                optional: true)
+            .AddEnvironmentVariables();
     }
-    public async Task UpdateValue(Label label)
+
+    public static void Main(string[] args)
     {
-        var dev = new DeviceTemperature("/sys/class/hwmon/hwmon6/temp1_input");
-        while (true)
-        {
-            _temperatureMonitor.UpdateDevice(dev);
-            label.Text = $"Tctl - Current: {dev.Value}, Min: {dev.Min}, Max: {dev.Max}";
-            await Task.Delay(1000);
-            Application.MainLoop.Invoke(() => Application.Refresh());
-        }
+        var builder = new ConfigurationBuilder();
+        BuildConfig(builder);
+        Log.Logger = new LoggerConfiguration()
+            .ReadFrom.Configuration(builder.Build())
+            .Enrich.FromLogContext()
+            .WriteTo.File("/var/log/system-monitor/log", rollOnFileSizeLimit: true)
+            .CreateLogger();
+
+        Log.Logger.Information("Application Starting");
+
+        var host = Host.CreateDefaultBuilder()
+            .ConfigureServices((context, services) =>
+            {
+                services.AddSingleton<IApplicationWindow, ApplicationWindow>();
+                services.AddSingleton<MonitoringWindow>();
+            })
+            .UseSerilog()
+            .Build();
+
+        var service = ActivatorUtilities.CreateInstance<ApplicationWindow>(host.Services);
+        service.Run();
     }
 }
