@@ -10,15 +10,16 @@ public interface IApplicationWindow
 public class ApplicationWindow : IApplicationWindow
 {
     private readonly ILogger _logger;
+    private readonly MonitoringWindow _monitoringWindow;
 
-    public ApplicationWindow()
+    public ApplicationWindow(MonitoringWindow monitoringWindow)
     {
+        _monitoringWindow = monitoringWindow;
         _logger = Log.ForContext<Program>();
     }
     public void Run() {
         Application.Init();
-        var win = new MonitoringWindow();
-        Application.Top.Add(win);
+        Application.Top.Add(_monitoringWindow);
         _logger.Information("Starting user interface");
         Application.Run();
         Application.Shutdown();

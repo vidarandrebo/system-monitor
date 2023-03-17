@@ -14,7 +14,7 @@ public class MonitoringWindow : Window
     public MonitoringWindow()
     {
         _logger = Log.ForContext<Program>();
-        _temperatureMonitor = new TemperatureMonitor();
+        _temperatureMonitor = new TemperatureMonitor(_logger);
         _tasks = new List<Task>();
         Title = "System Monitor (Ctrl+Q to quit)";
         var valueSomething = new Label()

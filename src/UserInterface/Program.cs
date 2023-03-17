@@ -33,12 +33,13 @@ public class Program
             .ConfigureServices((context, services) =>
             {
                 services.AddSingleton<IApplicationWindow, ApplicationWindow>();
+                services.AddSingleton<IMonitoringService, MonitoringService>();
                 services.AddSingleton<MonitoringWindow>();
             })
             .UseSerilog()
             .Build();
 
-        var service = ActivatorUtilities.CreateInstance<ApplicationWindow>(host.Services);
+        var service = ActivatorUtilities.CreateInstance<MonitoringService>(host.Services);
         service.Run();
     }
 }

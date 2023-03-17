@@ -1,16 +1,16 @@
-﻿using System;
-using System.Collections.Generic;
-using System.IO;
-using System.Threading.Tasks;
-using Domain;
+﻿using Domain;
+using Serilog;
 
 namespace Monitors;
 
 public class TemperatureMonitor
 {
-    public TemperatureMonitor()
+    private readonly ILogger _logger;
+    public TemperatureMonitor(ILogger logger)
     {
         MonitoringModules = new List<MonitoringModule>();
+        _logger = logger;
+        _logger.Information("Created temperaturemonitor");
     }
 
     public List<MonitoringModule> MonitoringModules { get; set; }
