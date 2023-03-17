@@ -24,7 +24,7 @@ public class MonitoringWindow : Window
     }
     public async Task UpdateValue(Label label)
     {
-        var dev = new DeviceTemperature("/sys/class/hwmon/hwmon2/temp1_input");
+        var dev = new DeviceTemperature("/sys/class/hwmon/hwmon6/temp1_input");
         while (true)
         {
             _temperatureMonitor.UpdateDevice(dev);
