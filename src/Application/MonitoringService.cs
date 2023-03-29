@@ -1,4 +1,6 @@
-namespace Infrastructure;
+using System.Threading.Tasks;
+
+namespace Application;
 
 public interface IMonitoringService
 {
