@@ -1,7 +1,7 @@
 ﻿using Domain;
 using Microsoft.Extensions.Logging;
 
-namespace Monitors;
+namespace Application;
 
 public interface ITemperatureMonitor
 {

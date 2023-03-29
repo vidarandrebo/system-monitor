@@ -1,10 +1,12 @@
 ﻿using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
-using Monitors;
+using Application;
+using Application.Interfaces;
+using Infrastructure;
 using Serilog;
 
-namespace UserInterface;
+namespace ConsoleInterface;
 
 public class Program
 {
@@ -26,6 +28,7 @@ public class Program
             .ReadFrom.Configuration(builder.Build())
             .Enrich.FromLogContext()
             .WriteTo.File("/var/log/system-monitor/log", rollOnFileSizeLimit: true)
+            .WriteTo.Console()
             .CreateLogger();
 
         Log.Logger.Information("Application Starting");
@@ -33,15 +36,14 @@ public class Program
         var host = Host.CreateDefaultBuilder()
             .ConfigureServices((context, services) =>
             {
-                services.AddSingleton<IApplicationWindow, ApplicationWindow>();
                 services.AddSingleton<IMonitoringService, MonitoringService>();
                 services.AddSingleton<ITemperatureMonitor, TemperatureMonitor>();
-                services.AddSingleton<MonitoringWindow>();
+                services.AddTransient<IDeviceExplorer, DeviceExplorer>();
             })
             .UseSerilog()
             .Build();
 
-        var monitoringService = ActivatorUtilities.CreateInstance<MonitoringService>(host.Services);
-        monitoringService.Run();
+        var deviceExplorer = ActivatorUtilities.CreateInstance<DeviceExplorer>(host.Services);
+        deviceExplorer.Run();
     }
 }
