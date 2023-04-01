@@ -1,11 +1,9 @@
-﻿using System;
-using System.IO;
+﻿using Application;
+using Application.Interfaces;
+using Infrastructure;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
-using Application;
-using Application.Interfaces;
-using Infrastructure;
 using Serilog;
 
 namespace ConsoleInterface;
@@ -39,13 +37,14 @@ public class Program
             .ConfigureServices((context, services) =>
             {
                 services.AddSingleton<IMonitoringService, MonitoringService>();
-                services.AddSingleton<ITemperatureMonitor, TemperatureMonitor>();
                 services.AddTransient<IDeviceExplorer, DeviceExplorer>();
+                services.AddSingleton<IDeviceReader, DeviceReader>();
+                services.AddSingleton<IConsoleService, ConsoleService>();
             })
             .UseSerilog()
             .Build();
 
-        var deviceExplorer = ActivatorUtilities.CreateInstance<DeviceExplorer>(host.Services);
-        deviceExplorer.Run();
+        var consoleService = ActivatorUtilities.CreateInstance<ConsoleService>(host.Services);
+        consoleService.Run();
     }
 }

@@ -1,6 +1,3 @@
-using System;
-using System.Collections.Generic;
-
 namespace Domain.Network;
 
 public class NetworkInterface
@@ -15,4 +12,20 @@ public class NetworkInterface
     public string Name { get; set; }
     public string MacAddress { get; set; }
     public Dictionary<Guid, Statistic> Statistics;
+
+    public void AddStatistic(Statistic statistic)
+    {
+        Statistics.Add(Guid.NewGuid(), statistic);
+    }
+
+    public GuidToFilename[] GetFiles()
+    {
+        var files = new List<GuidToFilename>();
+        foreach (var id in Statistics.Keys)
+        {
+            files.Add(new GuidToFilename(id, Statistics[id].FileName));
+        }
+
+        return files.ToArray();
+    }
 }

@@ -1,5 +1,5 @@
 run: build
-	./bin/UserInterface
+	./bin/ConsoleInterface
 
 build:
 	dotnet publish src/ConsoleInterface/ -c Release -o bin
