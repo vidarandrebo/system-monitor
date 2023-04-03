@@ -29,6 +29,7 @@ public class DeviceReader : IDeviceReader
     public void Run()
     {
         _running = true;
+        var delay = new TimeSpan(0, 0, 0, 0, 0, 2000000 / _devices.Count);
         Task.Run(async () =>
         {
             while (_running)
@@ -50,8 +51,8 @@ public class DeviceReader : IDeviceReader
                             device.DeviceType
                         )
                     );
+                    await Task.Delay(delay);
                 }
-                await Task.Delay(2000);
             }
         });
     }

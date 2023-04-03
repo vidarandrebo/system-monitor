@@ -6,14 +6,14 @@ public class NetworkInterface
     {
         Name = name;
         MacAddress = macAddress;
-        Statistics = new Dictionary<Guid, Statistic>();
+        Statistics = new Dictionary<Guid, Device>();
     }
 
     public readonly string Name;
     public readonly string MacAddress;
-    public Dictionary<Guid, Statistic> Statistics;
+    public Dictionary<Guid, Device> Statistics;
 
-    public void AddStatistic(Statistic statistic)
+    public void AddStatistic(Device statistic)
     {
         Statistics.Add(Guid.NewGuid(), statistic);
     }
