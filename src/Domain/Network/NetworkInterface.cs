@@ -9,8 +9,8 @@ public class NetworkInterface
         Statistics = new Dictionary<Guid, Statistic>();
     }
 
-    public string Name { get; set; }
-    public string MacAddress { get; set; }
+    public readonly string Name;
+    public readonly string MacAddress;
     public Dictionary<Guid, Statistic> Statistics;
 
     public void AddStatistic(Statistic statistic)

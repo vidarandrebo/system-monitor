@@ -1,25 +1,23 @@
-using Application.Interfaces;
+using Application;
 
 namespace ConsoleInterface;
 
 public interface IConsoleService
 {
-    void Run();
+    Task Run();
 }
 
 public class ConsoleService : IConsoleService
 {
-    private readonly IDeviceExplorer _deviceExplorer;
-    private readonly IDeviceReader _deviceReader;
+    private readonly IMonitoringService _monitoringService;
 
-    public ConsoleService(IDeviceExplorer deviceExplorer, IDeviceReader deviceReader)
+    public ConsoleService(IMonitoringService monitoringService)
     {
-        _deviceExplorer = deviceExplorer;
-        _deviceReader = deviceReader;
+        _monitoringService = monitoringService;
     }
 
-    public void Run()
+    public async Task Run()
     {
-        _deviceExplorer.Run();
+        await _monitoringService.Run();
     }
 }

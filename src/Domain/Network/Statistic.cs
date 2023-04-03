@@ -2,11 +2,11 @@ namespace Domain.Network;
 
 public class Statistic
 {
-    public string Name;
-    public string FileName;
+    public readonly string Name;
+    public readonly string FileName;
     public IValue Value;
 
-    public Statistic(string name,string fileName)
+    public Statistic(string name, string fileName)
     {
         FileName = fileName;
         Name = name;

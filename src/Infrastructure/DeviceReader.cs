@@ -1,21 +1,63 @@
+using System.Threading.Channels;
+using Application;
 using Application.Interfaces;
+using Domain;
+using Microsoft.Extensions.Logging;
 
 namespace Infrastructure;
 
 public class DeviceReader : IDeviceReader
 {
-    public void RegisterDevice(Guid id, string filename)
+    private readonly ILogger<DeviceReader> _logger;
+    private Channel<DeviceValue> _valueChannel;
+    private List<DeviceInfo> _devices;
+    private bool _running;
+
+    public DeviceReader(ILogger<DeviceReader> logger)
     {
-        throw new NotImplementedException();
+        _logger = logger;
+        _valueChannel = Channel.CreateUnbounded<DeviceValue>();
+        _devices = new List<DeviceInfo>();
+        _running = false;
     }
 
-    public string ReadDevice(Guid id)
+    public void RegisterDevice(DeviceInfo deviceInfo)
     {
-        throw new NotImplementedException();
+        _devices.Add(deviceInfo);
     }
 
-    public string[] ReadDevices(IEnumerable<Guid> ids)
+    public void Run()
     {
-        throw new NotImplementedException();
+        _running = true;
+        Task.Run(async () =>
+        {
+            while (_running)
+            {
+                foreach (var device in _devices)
+                {
+                    var readResult = FileReader.ReadFileToString(device.FileName);
+                    if (readResult.Errors != null)
+                    {
+                        _logger.LogError("Failed to read from file {filename}", device.FileName);
+                        continue;
+                    }
+
+                    _valueChannel.Writer.TryWrite(
+                        new DeviceValue(
+                            device.ModuleId,
+                            device.ValueId,
+                            readResult.Value,
+                            device.DeviceType
+                        )
+                    );
+                }
+                await Task.Delay(2000);
+            }
+        });
+    }
+
+    public ChannelReader<DeviceValue> Subscribe()
+    {
+        return _valueChannel.Reader;
     }
 }

@@ -5,7 +5,7 @@ public class ByteValue : IValue
     private long _current;
     private long _max = Int64.MinValue;
     private long _min = Int64.MaxValue;
-    
+
     public void Update(string newValue)
     {
         try
@@ -16,6 +16,7 @@ public class ByteValue : IValue
         {
             _current = 0;
         }
+
         MinMax();
     }
 
@@ -38,14 +39,17 @@ public class ByteValue : IValue
         {
             return $"{(Convert.ToDouble(value) / BinaryPrefix.Tebi):0.00} TiB";
         }
+
         if (value > BinaryPrefix.Gibi)
         {
             return $"{(Convert.ToDouble(value) / BinaryPrefix.Gibi):0.00} GiB";
         }
+
         if (value > BinaryPrefix.Mebi)
         {
             return $"{(Convert.ToDouble(value) / BinaryPrefix.Mebi):0.00} MiB";
         }
+
         if (value > BinaryPrefix.Kibi)
         {
             return $"{(Convert.ToDouble(value) / BinaryPrefix.Kibi):0.00} kiB";

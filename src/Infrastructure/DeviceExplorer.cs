@@ -9,12 +9,12 @@ namespace Infrastructure;
 public class DeviceExplorer : IDeviceExplorer
 {
     private readonly ILogger<DeviceExplorer> _logger;
-    private List<NetworkInterface> _networkInterfaces;
+    private readonly Dictionary<Guid, NetworkInterface> _networkInterfaces;
 
     public DeviceExplorer(ILogger<DeviceExplorer> logger)
     {
         _logger = logger;
-        _networkInterfaces = new List<NetworkInterface>();
+        _networkInterfaces = new Dictionary<Guid, NetworkInterface>();
         _logger.LogInformation("DeviceExplorer Starting");
     }
 
@@ -23,7 +23,7 @@ public class DeviceExplorer : IDeviceExplorer
         FindNetworkInterfaces();
     }
 
-    public List<NetworkInterface> GetNetworkInterfaces()
+    public Dictionary<Guid,NetworkInterface> GetNetworkInterfaces()
     {
         return _networkInterfaces;
     }
@@ -31,7 +31,6 @@ public class DeviceExplorer : IDeviceExplorer
     private void FindNetworkInterfaces()
     {
         var devices = Directory.GetFileSystemEntries("/sys/class/net");
-        Console.WriteLine(String.Join('\n', devices));
         foreach (var device in devices)
         {
             var name = device.Split(Path.DirectorySeparatorChar).Last();
@@ -45,23 +44,26 @@ public class DeviceExplorer : IDeviceExplorer
             var networkInterface = new NetworkInterface(name, address.Value);
             var statisticsFiles = Directory.GetFileSystemEntries(Path.Join(device, "statistics"));
             FindDeviceStatistics(networkInterface, statisticsFiles);
-            
+            _networkInterfaces.Add(Guid.NewGuid(), networkInterface);
         }
     }
 
-    public void FindDeviceStatistics(NetworkInterface networkInterface, string[] filePaths)
+    private void FindDeviceStatistics(NetworkInterface networkInterface, string[] filePaths)
     {
-        Console.WriteLine(networkInterface.Name);
         foreach (var path in filePaths)
         {
             var fileContent = FileReader.ReadFileToString(path);
+            if (fileContent.Errors != null)
+            {
+                _logger.LogError("Failed to read from file {path}", path);
+                continue;
+            }
             var name = path.Split(Path.DirectorySeparatorChar).Last();
             var statistic = new Statistic(name, path);
             if (name.Contains("bytes"))
             {
                 statistic.Value = new ByteValue();
                 statistic.Update(fileContent.Value);
-                Console.WriteLine(statistic.Value.GetRecord());
             }
             else
             {

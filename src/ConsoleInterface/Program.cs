@@ -20,7 +20,7 @@ public class Program
             .AddEnvironmentVariables();
     }
 
-    public static void Main(string[] args)
+    public static async Task Main(string[] args)
     {
         var builder = new ConfigurationBuilder();
         BuildConfig(builder);
@@ -45,6 +45,6 @@ public class Program
             .Build();
 
         var consoleService = ActivatorUtilities.CreateInstance<ConsoleService>(host.Services);
-        consoleService.Run();
+        await consoleService.Run();
     }
 }
