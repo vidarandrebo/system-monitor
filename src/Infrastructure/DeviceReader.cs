@@ -51,8 +51,10 @@ public class DeviceReader : IDeviceReader
                             device.DeviceType
                         )
                     );
-                    await Task.Delay(delay);
+                    //await Task.Delay(delay);
                 }
+
+                await Task.Delay(2000);
             }
         });
     }

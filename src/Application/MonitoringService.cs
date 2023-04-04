@@ -63,17 +63,17 @@ public class MonitoringService : IMonitoringService
             {
                 case DeviceType.Network:
                     NetworkInterfaces[value.ModuleId].Statistics[value.ValueId].Update(value.Value);
-                   //if (NetworkInterfaces[value.ModuleId].Statistics[value.ValueId].Value.GetRecord().Current != "0")
-                   //{
-                   //    Console.WriteLine(
-                   //        $"{NetworkInterfaces[value.ModuleId].Name}\t{NetworkInterfaces[value.ModuleId].Statistics[value.ValueId].Name}\t{NetworkInterfaces[value.ModuleId].Statistics[value.ValueId].Value.GetRecord().Current}");
-                   //}
+                    //if (NetworkInterfaces[value.ModuleId].Statistics[value.ValueId].Value.GetRecord().Current != "0")
+                    //{
+                    //    Console.WriteLine(
+                    //        $"{NetworkInterfaces[value.ModuleId].Name}\t{NetworkInterfaces[value.ModuleId].Statistics[value.ValueId].Name}\t{NetworkInterfaces[value.ModuleId].Statistics[value.ValueId].Value.GetRecord().Current}");
+                    //}
 
                     break;
                 case DeviceType.Temperature:
                     TemperatureModules[value.ModuleId].Devices[value.ValueId].Update(value.Value);
-                   //Console.WriteLine(
-                   //    $"{TemperatureModules[value.ModuleId].Name}\t{TemperatureModules[value.ModuleId].Devices[value.ValueId].Name}\t{TemperatureModules[value.ModuleId].Devices[value.ValueId].Value.GetRecord().Current}");
+                    Console.WriteLine(
+                        $"{TemperatureModules[value.ModuleId].Name}\t{TemperatureModules[value.ModuleId].Devices[value.ValueId].Name}\t{TemperatureModules[value.ModuleId].Devices[value.ValueId].Value.GetRecord().Current}");
 
                     break;
                 default:
