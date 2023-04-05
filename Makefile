@@ -1,8 +1,13 @@
-run: build
-	./bin/ConsoleInterface
 
-build:
-	dotnet publish src/ConsoleInterface/ -c Release -o bin
+run: build-backend
+	cd bin && ./WebAPI
+
+build-backend: build-frontend
+	dotnet publish src/WebAPI/ -c Release -o bin
+
+build-frontend:
+	cd src/WebUI/ && npm run build
+	cp -r src/WebUI/dist/* src/WebAPI/wwwroot/
 
 clean:
 	rm -rf bin
