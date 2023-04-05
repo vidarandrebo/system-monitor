@@ -1,13 +1,12 @@
 {
   "compilerOptions": {
-    "target": "es2021",
-    "module": "commonjs",
-    "moduleResolution": "node",
+    "outDir": "./dist/",
+    "noImplicitAny": true,
     "sourceMap": true,
-    "outDir": "dist",
-  },
-  "include": [
-    "src/**/*",
-    "test/**/*",
-  ]
+    "module": "es6",
+    "target": "es6",
+    "jsx": "react",
+    "allowJs": true,
+    "moduleResolution": "node"
+  }
 }
