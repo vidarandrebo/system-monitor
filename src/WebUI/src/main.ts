@@ -1,5 +1,12 @@
-import {TestClass} from "./testClass";
+const sleep = (ms: number) => {
+    return new Promise((resolve, reject) => setTimeout(resolve, ms));
+  };
 
-console.log("Hei");
-const test = new TestClass();
-console.log(test.a);
+
+async function mainLoop() {
+    while (true) {
+        console.log("Hello")
+        await sleep(2000);
+    }
+}
+mainLoop();

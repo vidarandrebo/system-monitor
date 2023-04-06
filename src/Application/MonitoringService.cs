@@ -3,37 +3,36 @@ using Application.Interfaces;
 using Domain;
 using Domain.Network;
 using Domain.Temperature;
+using Microsoft.Extensions.Logging;
 
 namespace Application;
 
-public interface IMonitoringService
-{
-    public Task Run();
-}
-
 public class MonitoringService : IMonitoringService
 {
+    private readonly ILogger<IMonitoringService> _logger;
     private readonly IDeviceExplorer _deviceExplorer;
     private readonly IDeviceReader _deviceReader;
     private ChannelReader<DeviceValue> _valueChannel;
-    public Dictionary<Guid, NetworkInterface> NetworkInterfaces;
-    public Dictionary<Guid, TemperatureModule> TemperatureModules;
+    private Dictionary<Guid, NetworkInterface> _networkInterfaces;
+    private Dictionary<Guid, TemperatureModule> _temperatureModules;
 
-    public MonitoringService(IDeviceExplorer deviceExplorer, IDeviceReader deviceReader)
+    public MonitoringService(IDeviceExplorer deviceExplorer, IDeviceReader deviceReader, ILogger<IMonitoringService> logger)
     {
         _deviceExplorer = deviceExplorer;
         _deviceReader = deviceReader;
-        NetworkInterfaces = new Dictionary<Guid, NetworkInterface>();
-        TemperatureModules = new Dictionary<Guid, TemperatureModule>();
+        _logger = logger;
+        _networkInterfaces = new Dictionary<Guid, NetworkInterface>();
+        _temperatureModules = new Dictionary<Guid, TemperatureModule>();
         _valueChannel = _deviceReader.Subscribe();
+        _logger.LogInformation("Created instance of MonitoringService");
     }
 
     public async Task Run()
     {
         _deviceExplorer.Run();
-        NetworkInterfaces = _deviceExplorer.GetNetworkInterfaces();
-        TemperatureModules = _deviceExplorer.GetTemperatureModules();
-        foreach (var (moduleId, networkInterface) in NetworkInterfaces)
+        _networkInterfaces = _deviceExplorer.GetNetworkInterfaces();
+        _temperatureModules = _deviceExplorer.GetTemperatureModules();
+        foreach (var (moduleId, networkInterface) in _networkInterfaces)
         {
             foreach (var (valueId, statistic) in networkInterface.Statistics)
             {
@@ -41,7 +40,7 @@ public class MonitoringService : IMonitoringService
             }
         }
 
-        foreach (var (moduleId, temperatureModule) in TemperatureModules)
+        foreach (var (moduleId, temperatureModule) in _temperatureModules)
         {
             foreach (var (deviceId, device) in temperatureModule.Devices)
             {
@@ -54,15 +53,21 @@ public class MonitoringService : IMonitoringService
         await MainLoop();
     }
 
+    public Dictionary<Guid, TemperatureModule> GetTemperatureModules()
+    {
+        return _temperatureModules;
+    }
+
     private async Task MainLoop()
     {
+        _logger.LogInformation("Main loop of MonitoringService started");
         while (true)
         {
             var value = await _valueChannel.ReadAsync();
             switch (value.DeviceType)
             {
                 case DeviceType.Network:
-                    NetworkInterfaces[value.ModuleId].Statistics[value.ValueId].Update(value.Value);
+                    _networkInterfaces[value.ModuleId].Statistics[value.ValueId].Update(value.Value);
                     //if (NetworkInterfaces[value.ModuleId].Statistics[value.ValueId].Value.GetRecord().Current != "0")
                     //{
                     //    Console.WriteLine(
@@ -71,9 +76,9 @@ public class MonitoringService : IMonitoringService
 
                     break;
                 case DeviceType.Temperature:
-                    TemperatureModules[value.ModuleId].Devices[value.ValueId].Update(value.Value);
-                    Console.WriteLine(
-                        $"{TemperatureModules[value.ModuleId].Name}\t{TemperatureModules[value.ModuleId].Devices[value.ValueId].Name}\t{TemperatureModules[value.ModuleId].Devices[value.ValueId].Value.GetRecord().Current}");
+                    _temperatureModules[value.ModuleId].Devices[value.ValueId].Update(value.Value);
+                   //Console.WriteLine(
+                   //    $"{TemperatureModules[value.ModuleId].Name}\t{TemperatureModules[value.ModuleId].Devices[value.ValueId].Name}\t{TemperatureModules[value.ModuleId].Devices[value.ValueId].Value.GetRecord().Current}");
 
                     break;
                 default:

@@ -1,3 +1,6 @@
+using Application;
+using Application.Interfaces;
+using Infrastructure;
 using Serilog;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -18,6 +21,11 @@ Log.Logger = new LoggerConfiguration()
 
 builder.Host.UseSerilog();
 
+builder.Services.AddSingleton<IMonitoringService, MonitoringService>();
+builder.Services.AddTransient<IDeviceExplorer, DeviceExplorer>();
+builder.Services.AddSingleton<IDeviceReader, DeviceReader>();
+
+
 var app = builder.Build();
 
 // Configure the HTTP request pipeline.
@@ -34,5 +42,8 @@ app.UseStaticFiles();
 app.UseAuthorization();
 
 app.MapControllers();
+
+var monitoringService =  app.Services.GetRequiredService<IMonitoringService>();
+monitoringService.Run();
 
 app.Run();

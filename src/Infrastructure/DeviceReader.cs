@@ -19,6 +19,7 @@ public class DeviceReader : IDeviceReader
         _valueChannel = Channel.CreateUnbounded<DeviceValue>();
         _devices = new List<DeviceInfo>();
         _running = false;
+        _logger.LogInformation("Created instance of DeviceReader");
     }
 
     public void RegisterDevice(DeviceInfo deviceInfo)

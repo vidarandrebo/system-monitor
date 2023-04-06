@@ -18,7 +18,7 @@ public class DeviceExplorer : IDeviceExplorer
         _logger = logger;
         _networkInterfaces = new Dictionary<Guid, NetworkInterface>();
         _temperatureModules = new Dictionary<Guid, TemperatureModule>();
-        _logger.LogInformation("DeviceExplorer Starting");
+        _logger.LogInformation("Created instance of DeviceExplorer");
     }
 
     public void Run()

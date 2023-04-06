@@ -1,14 +1,14 @@
 build: build-frontend
-	rm -r bin
+	-rm -r bin
 	dotnet publish src/WebAPI/ -c Release -o bin
 
 build-frontend:
-	rm -r src/WebAPI/wwwroot/*
+	-rm -r src/WebAPI/wwwroot/*
 	cd src/WebUI/ && npm run build
 	cp -r src/WebUI/dist/* src/WebAPI/wwwroot/
 
 clean:
-	rm -rf bin
+	-rm -rf bin
 	find ./src/Domain -type d \( -name "bin" -o -name "obj" \) -exec rm -rf {} +
 	find ./src/Application -type d \( -name "bin" -o -name "obj" \) -exec rm -rf {} +
 	find ./src/Infrastructure -type d \( -name "bin" -o -name "obj" \) -exec rm -rf {} +
