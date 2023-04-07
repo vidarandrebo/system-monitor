@@ -22,9 +22,9 @@ public class ConsoleService : IConsoleService
         while (true)
         {
             var tempModules = _monitoringService.GetTemperatureModules();
-            foreach (var (moduleId, module) in tempModules)
+            foreach (var (moduleId, module) in tempModules.OrderBy(m => m.Value.Name))
             {
-                foreach (var (deviceId, device) in module.Devices)
+                foreach (var (deviceId, device) in module.Devices.OrderBy(d => d.Value.Name))
                 {
                     Console.WriteLine($"{module.Name}, {device.Name}, {device.Value.GetRecord().Current}");
                 }

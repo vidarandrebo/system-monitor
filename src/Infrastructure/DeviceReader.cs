@@ -1,3 +1,4 @@
+using System.Diagnostics;
 using System.Threading.Channels;
 using Application;
 using Application.Interfaces;
@@ -33,8 +34,10 @@ public class DeviceReader : IDeviceReader
         var delay = new TimeSpan(0, 0, 0, 0, 0, 2000000 / _devices.Count);
         Task.Run(async () =>
         {
+            var stopWatch = new Stopwatch();
             while (_running)
             {
+                stopWatch.Start();
                 foreach (var device in _devices)
                 {
                     var readResult = FileReader.ReadFileToString(device.FileName);
@@ -54,6 +57,9 @@ public class DeviceReader : IDeviceReader
                     );
                     //await Task.Delay(delay);
                 }
+                stopWatch.Stop();
+                _logger.LogInformation("Read {deviceCount} files in {timems} ms", _devices.Count, stopWatch.ElapsedMilliseconds);
+                stopWatch.Reset();
 
                 await Task.Delay(2000);
             }
