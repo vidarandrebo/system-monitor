@@ -29,10 +29,10 @@ public class DataController : ControllerBase
         _logger.LogInformation("In Datacontroller");
         var moduleDTOs = new List<TemperatureModuleDTO>();
         var modules = _monitoringService.GetTemperatureModules();
-        foreach (var (moduleId, module) in modules)
+        foreach (var (moduleId, module) in modules.OrderBy(m => m.Value.Name))
         {
             var deviceDTOs = new List<DeviceDTO>();
-            foreach (var (deviceId, device) in module.Devices)
+            foreach (var (deviceId, device) in module.Devices.OrderBy(d => d.Value.Name))
             {
                 deviceDTOs.Add(new DeviceDTO(deviceId, device.Name, device.Value.GetRecord()));
             }

@@ -18,6 +18,19 @@ public class ConsoleService : IConsoleService
 
     public async Task Run()
     {
-        await _monitoringService.Run();
+        Task.Run(() => _monitoringService.Run());
+        while (true)
+        {
+            var tempModules = _monitoringService.GetTemperatureModules();
+            foreach (var (moduleId, module) in tempModules)
+            {
+                foreach (var (deviceId, device) in module.Devices)
+                {
+                    Console.WriteLine($"{module.Name}, {device.Name}, {device.Value.GetRecord().Current}");
+                }
+            }
+
+            await Task.Delay(2000);
+        }
     }
 }

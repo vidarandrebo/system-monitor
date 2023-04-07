@@ -5,6 +5,12 @@ public class IntegerValue : IValue
     private long _current;
     private long _max;
     private long _min;
+
+    public IntegerValue()
+    {
+        _max = long.MinValue;
+        _min = long.MaxValue;
+    }
     
     public void Update(string newValue)
     {

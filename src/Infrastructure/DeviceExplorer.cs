@@ -54,7 +54,10 @@ public class DeviceExplorer : IDeviceExplorer
             var networkInterface = new NetworkInterface(name, address.Value);
             var statisticsFiles = Directory.GetFileSystemEntries(Path.Join(device, "statistics"));
             FindDeviceStatistics(networkInterface, statisticsFiles);
-            _networkInterfaces.Add(Guid.NewGuid(), networkInterface);
+            if (networkInterface.Statistics.Count > 0)
+            {
+                _networkInterfaces.Add(Guid.NewGuid(), networkInterface);
+            }
         }
     }
 
@@ -91,7 +94,10 @@ public class DeviceExplorer : IDeviceExplorer
             var module = new TemperatureModule(name.Value);
             var deviceFiles = Directory.GetFileSystemEntries(modulePath);
             FindTemperatureDevices(module, deviceFiles);
-            _temperatureModules.Add(Guid.NewGuid(), module);
+            if (module.Devices.Count > 0)
+            {
+                _temperatureModules.Add(Guid.NewGuid(), module);
+            }
         }
     }
 
@@ -111,6 +117,7 @@ public class DeviceExplorer : IDeviceExplorer
                     device.Name = nameResult.Value;
                 }
             }
+
             temperatureModule.AddDevice(device);
         }
     }
