@@ -38,27 +38,35 @@ public class DeviceReader : IDeviceReader
             while (_running)
             {
                 stopWatch.Start();
+                var tasks = new List<Task>();
                 foreach (var device in _devices)
                 {
-                    var readResult = FileReader.ReadFileToString(device.FileName);
-                    if (readResult.Errors != null)
+                    var task = Task.Run(() =>
                     {
-                        _logger.LogError("Failed to read from file {filename}", device.FileName);
-                        continue;
-                    }
+                        var readResult = FileReader.ReadFileToString(device.FileName);
+                        if (readResult.Errors != null)
+                        {
+                            _logger.LogError("Failed to read from file {filename}", device.FileName);
+                            return;
+                        }
 
-                    _valueChannel.Writer.TryWrite(
-                        new DeviceValue(
-                            device.ModuleId,
-                            device.ValueId,
-                            readResult.Value,
-                            device.DeviceType
-                        )
-                    );
-                    //await Task.Delay(delay);
+                        _valueChannel.Writer.TryWrite(
+                            new DeviceValue(
+                                device.ModuleId,
+                                device.ValueId,
+                                readResult.Value,
+                                device.DeviceType
+                            )
+                        );
+                    });
+                    tasks.Add(task);
                 }
+
+                await Task.WhenAll(tasks);
+
                 stopWatch.Stop();
-                _logger.LogInformation("Read {deviceCount} files in {timems} ms", _devices.Count, stopWatch.ElapsedMilliseconds);
+                _logger.LogInformation("Read {deviceCount} files in {timems} ms", _devices.Count,
+                    stopWatch.ElapsedMilliseconds);
                 stopWatch.Reset();
 
                 await Task.Delay(2000);

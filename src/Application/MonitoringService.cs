@@ -16,7 +16,8 @@ public class MonitoringService : IMonitoringService
     private Dictionary<Guid, NetworkInterface> _networkInterfaces;
     private Dictionary<Guid, TemperatureModule> _temperatureModules;
 
-    public MonitoringService(IDeviceExplorer deviceExplorer, IDeviceReader deviceReader, ILogger<IMonitoringService> logger)
+    public MonitoringService(IDeviceExplorer deviceExplorer, IDeviceReader deviceReader,
+        ILogger<IMonitoringService> logger)
     {
         _deviceExplorer = deviceExplorer;
         _deviceReader = deviceReader;
@@ -58,6 +59,23 @@ public class MonitoringService : IMonitoringService
         return _temperatureModules;
     }
 
+    public List<TemperatureModuleDTO> GetTemperatureModuleDTOs()
+    {
+        var moduleDTOs = new List<TemperatureModuleDTO>();
+        foreach (var (moduleId, module) in _temperatureModules.OrderBy(m => m.Value.Name))
+        {
+            var deviceDTOs = new List<DeviceDTO>();
+            foreach (var (deviceId, device) in module.Devices.OrderBy(d => d.Value.Name))
+            {
+                deviceDTOs.Add(new DeviceDTO(deviceId, device.Name, device.Value.GetRecord()));
+            }
+
+            moduleDTOs.Add(new TemperatureModuleDTO(moduleId, module.Name, deviceDTOs));
+        }
+
+        return moduleDTOs;
+    }
+
     private async Task MainLoop()
     {
         _logger.LogInformation("Main loop of MonitoringService started");
@@ -68,18 +86,9 @@ public class MonitoringService : IMonitoringService
             {
                 case DeviceType.Network:
                     _networkInterfaces[value.ModuleId].Statistics[value.ValueId].Update(value.Value);
-                    //if (NetworkInterfaces[value.ModuleId].Statistics[value.ValueId].Value.GetRecord().Current != "0")
-                    //{
-                    //    Console.WriteLine(
-                    //        $"{NetworkInterfaces[value.ModuleId].Name}\t{NetworkInterfaces[value.ModuleId].Statistics[value.ValueId].Name}\t{NetworkInterfaces[value.ModuleId].Statistics[value.ValueId].Value.GetRecord().Current}");
-                    //}
-
                     break;
                 case DeviceType.Temperature:
                     _temperatureModules[value.ModuleId].Devices[value.ValueId].Update(value.Value);
-                   //Console.WriteLine(
-                   //    $"{TemperatureModules[value.ModuleId].Name}\t{TemperatureModules[value.ModuleId].Devices[value.ValueId].Name}\t{TemperatureModules[value.ModuleId].Devices[value.ValueId].Value.GetRecord().Current}");
-
                     break;
                 default:
                     break;
