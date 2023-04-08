@@ -1,6 +1,8 @@
+using System.Collections.Generic;
 using Application.Interfaces;
 using Domain.Temperature;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.Logging;
 
 namespace WebAPI.Controllers;
 

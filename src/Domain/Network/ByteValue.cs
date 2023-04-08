@@ -1,3 +1,5 @@
+using System;
+
 namespace Domain.Network;
 
 public class ByteValue : IValue

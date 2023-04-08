@@ -1,3 +1,5 @@
+using System;
+
 namespace Domain.Temperature;
 
 public class TemperatureValue : IValue

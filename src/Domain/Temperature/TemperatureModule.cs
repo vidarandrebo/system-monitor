@@ -1,3 +1,6 @@
+using System;
+using System.Collections.Generic;
+
 namespace Domain.Temperature;
 
 public class TemperatureModule
