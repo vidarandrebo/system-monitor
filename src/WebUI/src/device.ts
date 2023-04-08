@@ -9,7 +9,7 @@ export class Device {
         this.name = name;
         this.mainElement = document.createElement("tr")
         this.nameElement = document.createElement("td")
-        this.nameElement.innerText = name;
+        this.nameElement.innerText = this.name;
         this.mainElement.appendChild(this.nameElement);
         table.appendChild(this.mainElement);
     }
