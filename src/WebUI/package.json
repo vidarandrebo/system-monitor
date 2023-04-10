@@ -1,15 +1,15 @@
- {
+{
    "name": "system-monitor",
    "version": "1.0.0",
    "description": "",
    "scripts": {
-     "build": "npx webpack && cp -R public/* dist/"
+      "build": "npx webpack && cp -R public/* dist/"
    },
-  "private": true,
-  "devDependencies": {
-    "ts-loader": "^9.4.2",
-    "typescript": "^5.0.3",
-    "webpack": "^5.78.0",
-    "webpack-cli": "^5.0.1"
-  }
+   "private": true,
+   "devDependencies": {
+      "ts-loader": "^9.4.2",
+      "typescript": "^5.0.3",
+      "webpack": "^5.78.0",
+      "webpack-cli": "^5.0.1"
+   }
 }

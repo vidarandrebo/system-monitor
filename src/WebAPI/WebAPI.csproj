@@ -5,6 +5,8 @@
         <Nullable>enable</Nullable>
         <ImplicitUsings>disable</ImplicitUsings>
         <DockerDefaultTargetOS>Linux</DockerDefaultTargetOS>
+        <ServerGarbageCollection>false</ServerGarbageCollection>
+        <AssemblyName>system-monitor-api</AssemblyName>
     </PropertyGroup>
 
     <ItemGroup>
