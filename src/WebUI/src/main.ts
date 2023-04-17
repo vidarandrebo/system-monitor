@@ -44,6 +44,9 @@ async function mainLoop(modules: Map<string, Module>) {
                     .get(deviceId)
                     .value
                     .update(moduleRecord.devices[j].value);
+                modules.get(moduleRecord.moduleId)
+                    .devices
+                    .get(deviceId).updateHidden();
             }
         }
         await sleep(2000);

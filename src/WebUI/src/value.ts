@@ -34,4 +34,8 @@ export class Value {
         this.maxElement.innerText = this.max
         this.averageElement.innerText = this.average
     }
+    public isNonZero(): boolean {
+        return this.max != "0";
+
+    }
 }

@@ -21,8 +21,8 @@ public class DataController : ControllerBase
     }
 
     [HttpGet]
-    public ActionResult<List<TemperatureModuleDTO>> Get()
+    public ActionResult<List<ModuleDTO>> Get()
     {
-        return _monitoringService.GetTemperatureModuleDTOs();
+        return _monitoringService.GetModuleDTOs();
     }
 }

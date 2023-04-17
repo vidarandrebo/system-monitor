@@ -63,9 +63,9 @@ public class MonitoringService : IMonitoringService
         return _temperatureModules;
     }
 
-    public List<TemperatureModuleDTO> GetTemperatureModuleDTOs()
+    public List<ModuleDTO> GetModuleDTOs()
     {
-        var moduleDTOs = new List<TemperatureModuleDTO>();
+        var moduleDTOs = new List<ModuleDTO>();
         foreach (var (moduleId, module) in _temperatureModules.OrderBy(m => m.Value.Name))
         {
             var deviceDTOs = new List<DeviceDTO>();
@@ -74,7 +74,17 @@ public class MonitoringService : IMonitoringService
                 deviceDTOs.Add(new DeviceDTO(deviceId, device.Name, device.Value.GetRecord()));
             }
 
-            moduleDTOs.Add(new TemperatureModuleDTO(moduleId, module.Name, deviceDTOs));
+            moduleDTOs.Add(new ModuleDTO(moduleId, module.Name, deviceDTOs));
+        }
+        foreach (var (moduleId, module) in _networkInterfaces.OrderBy(m => m.Value.Name))
+        {
+            var deviceDTOs = new List<DeviceDTO>();
+            foreach (var (deviceId, device) in module.Statistics.OrderBy(d => d.Value.Name))
+            {
+                deviceDTOs.Add(new DeviceDTO(deviceId, device.Name, device.Value.GetRecord()));
+            }
+
+            moduleDTOs.Add(new ModuleDTO(moduleId, module.Name, deviceDTOs));
         }
 
         return moduleDTOs;

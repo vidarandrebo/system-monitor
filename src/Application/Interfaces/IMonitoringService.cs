@@ -9,5 +9,5 @@ public interface IMonitoringService
 {
     Task Run();
     Dictionary<Guid, TemperatureModule> GetTemperatureModules();
-    List<TemperatureModuleDTO> GetTemperatureModuleDTOs();
+    List<ModuleDTO> GetModuleDTOs();
 }

@@ -23,7 +23,7 @@ public class ConsoleService : IConsoleService
         Task.Run(() => _monitoringService.Run());
         while (true)
         {
-            var tempModules = _monitoringService.GetTemperatureModuleDTOs();
+            var tempModules = _monitoringService.GetModuleDTOs();
             foreach (var module in tempModules)
             {
                 foreach (var  device in module.Devices)
