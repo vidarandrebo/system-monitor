@@ -1,3 +1,4 @@
 #!/bin/sh
 cd /usr/local/share/system-monitor/
+killall -q system-monitor-api
 ./system-monitor-api
