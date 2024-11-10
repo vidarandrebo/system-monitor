@@ -1,6 +1,6 @@
 {
    "name": "system-monitor",
-   "version": "2.0.0",
+   "version": "2.0.1",
    "description": "",
    "scripts": {
       "build": "npx webpack && cp -R public/* dist/"
@@ -8,8 +8,8 @@
    "private": true,
    "devDependencies": {
       "ts-loader": "^9.5.1",
-      "typescript": "^5.3.2",
-      "webpack": "^5.89.0",
+      "typescript": "^5.6.3",
+      "webpack": "^5.96.1",
       "webpack-cli": "^5.1.4"
    }
 }
